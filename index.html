@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Home | POS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+    <div class="container-fluid pt-2">
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <h1 class="display-4 text-center mt-3 p-2">Point of Sale</h1>
+                <h6 class="text-center text-secondary">Beta Release v1.0</h6>
+                <div class="container-fluid text-center pt-5">
+                    <a href="pos/pos.html" class="btn btn-primary btn-block btn-lg">POS</a>
+                    <a href="#" class="btn btn-primary btn-block btn-lg">Inventory</a>
+                    <a href="#" class="btn btn-primary btn-block btn-lg">Reports</a>
+                    <a href="#" id="helpBtn" class="btn btn-primary btn-block btn-lg" data-toggle="modal" data-target="#helpModal">Help</a>
+                    <a href="#" class="btn btn-primary btn-block btn-lg">About</a>
+                </div>
+                <h6 class="text-center text-secondary pt-5 mt-5">FR Developers 2020 Copyright | Farhan Ramzan</h6>
+            </div>
+            <div class="col-sm-4"></div>
+        </div>
+
+
+    </div>
+    <div id="helpModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title text-left">Keyboard Shortcuts</h4>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li>Press <mark>P</mark> for POS (Point of Sale)</li>
+                        <li>Press <mark>I</mark> for Inventory</li>
+                        <li>Press <mark>R</mark> for Reports</li>
+                        <li>Press <mark>?</mark> for Help</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        document.body.onkeydown = function (evt) {
+            console.log(evt.keyCode);
+            
+            switch (evt.keyCode) {
+                case 80:
+                    console.log("P"); //Point of sale
+                    window.location = "pos/pos.html";
+                    break;
+                case 82:
+                    console.log("R"); //Reports
+                    alert("Reports - Error 404");
+                    // window.location = "pos/pos.html";
+                    break;
+                case 191:
+                    console.log("?"); //Help
+                    helpBtn.click();
+                    break;
+                case 73:
+                    console.log("A"); //Inventory
+                    alert("Inventory - Error 404");
+                    // window.location = "pos/pos.html";
+                    break;
+            }
+        }
+    </script>
+
+</body>
+
+</html>

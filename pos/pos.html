@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>POS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="../js/print.min.js"></script>
+    <script src='../js/pdfmake.min.js'></script>
+<script src='../js/vfs_fonts.js'></script>
+</head>
+
+<body>
+
+    <div class="container-fluid pt-2">
+        <div class="row">
+            <div class="col-sm-2">
+                
+            </div>
+            <div class="col-sm-8">
+                <h1 class="display-4 text-center mt-3 p-2">Menu</h1>
+                <h6 class="text-center text-secondary">Beta Release v1.0</h6>
+                <div class="container-fluid text-center mt-3">
+                    <table id="tlist" class="table table-borderless">
+                        <thead id="table_head">
+                            <tr style="background-color: white;">
+                                <th>Sr#</th>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Qty</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="item_menu">
+                            <!-- dynamic dishes list will generate here -->
+
+                        </tbody>
+
+
+                    </table>
+                    <br><br>
+                    <button class="btn btn-info btn-block btn-sm" id="addNewDish" onclick="addNewDish()">Add Unlisted
+                        Dish</button>
+                    <button class="btn btn-success btn-block btn-lg" id="orderBtn" onclick="calBill()">Order <span
+                            class="glyphicon glyphicon-ok"></span></button>
+
+                    <br>
+                    <h3 id="result"></h3>
+                    <h3 id="receipt"></h3>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <button class="btn btn-info sticky-top m-2" id="homeBtn" onclick="gotohome()">Home</button>
+                <button class="btn btn-danger sticky-top m-2" id="clearBtn" onclick="clearBill()">Reset</button>
+                <a href="#" id="helpBtn" class="btn btn-primary m-2" data-toggle="modal"
+                    data-target="#helpModal">Help</a>
+            </div>
+
+            <div id="helpModal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title text-left">Keyboard Shortcuts</h4>
+                        </div>
+                        <div class="modal-body">
+                            <ul>
+                                <li>Press <mark>f10</mark> for Home</li>
+                                <li>Press <mark>f5</mark> for Reset</li>
+                                <li>Press <mark>.</mark> for Adding Unlisted Dish</li>
+                                <li>Press <mark>?</mark> for Help</li>
+                            </ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <script>
+        document.body.onkeydown = function (evt) {
+            console.log(evt.keyCode);
+            switch (evt.keyCode) {
+
+                case 116:
+                    console.log("f5"); //reset
+                    clearBill();
+                    break;
+
+                case 117:
+                    console.log("f6");
+                    break;
+
+                case 118:
+                    console.log("f7");
+                    break;
+
+                case 119:
+                    console.log("f8");
+                    break;
+
+                case 120:
+                    console.log("f9");
+                    break;
+
+                case 121:
+                    console.log("f10"); //home
+                    gotohome();
+                    break;
+
+                case 190:
+                    console.log("."); //add unlisted dish
+                    addNewDish();
+                    break;
+
+                case 191:
+                    console.log("?"); //Help
+                    helpBtn.click();
+                    break;
+            }
+        }
+
+        let dishes = [];
+        let orderList = [{
+            dishName: "",
+            dishPrice: "",
+            dishQty: "",
+            dishTotal: ""
+        }];
+        let dishItems = document.getElementsByClassName('dishItem');
+        //dishes list stored in array
+        dishes = [{
+            dishName: "Biryani",
+            dishPrice: "160"
+        }, {
+            dishName: "Mutton",
+            dishPrice: "250"
+        }, {
+            dishName: "Cold Drink",
+            dishPrice: "25"
+        }, {
+            dishName: "Raita",
+            dishPrice: "30"
+        }, {
+            dishName: "Daal",
+            dishPrice: "70"
+        }, {
+            dishName: "Sabzi",
+            dishPrice: "60"
+        }
+            //just add here new dish name
+        ];
+
+        // jsonDishes = JSON.stringify(dishes);
+
+        // function exportToJson(jsonData) {
+        //     let dataStr = JSON.stringify(jsonData);
+        //     let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
+        //     let exportFileDefaultName = 'data.json';
+
+        //     let linkElement = document.createElement('a');
+        //     linkElement.setAttribute('href', dataUri);
+        //     linkElement.setAttribute('download', exportFileDefaultName);
+        //     linkElement.click();
+        // }
+        // exportToJson(jsonDishes);
+
+
+        //loop to generate dishes in table
+        for (let item in dishes) {
+            let sno = item;
+            let tr = document.createElement('tr');
+            tr.setAttribute('id', dishes[item].dishName);
+            tr.innerHTML = "<td>" + (parseInt(sno) + 1) + "</td><td><input class='form-control' type='text' value='" + dishes[item].dishName + "'><td><input class='form-control' type='text' value='" + dishes[item].dishPrice + "'></td><td><input class='form-control' onchange='chngColor()' type='number' min='1' value='1'></td><td><input class='dishItem checkbox form-control' onchange='chngColor()' type='checkbox'></td>";
+            item_menu.appendChild(tr);
+        }
+
+        //add unlisted dish
+        function addNewDish() {
+            let custom_dishName = "";
+            let custom_dishPrice = 0;
+
+            let tr = document.createElement('tr');
+            tr.innerHTML = "<td>" + (dishes.length + 1) + "</td><td><input class='form-control' type='text' value='" + custom_dishName + "'><td><input class='form-control' type='text' value='" + custom_dishPrice + "'></td><td><input class='form-control' onchange='chngColor()' type='number' min='1' value='1'></td><td><input class='dishItem checkbox form-control' onchange='chngColor()' type='checkbox'></td>";
+            item_menu.appendChild(tr);
+            dishes.push({
+                dishName: custom_dishName,
+                dishPrice: custom_dishPrice
+            });
+        }
+
+        //function to change tr color
+        function chngColor() {
+            // result.innerHTML = "";
+            for (let item of dishItems) {
+                let x = item.parentNode.parentNode.style; //local
+                if (item.checked == true) {
+                    x.backgroundColor = "Green";
+                    x.color = "white";
+                } else if (item.checked == false) {
+                    x.backgroundColor = "white";
+                    x.color = "black";
+
+                }
+                if (Biryani.lastElementChild.firstElementChild.checked) {
+                    Raita.lastElementChild.firstElementChild.checked = true;
+                    Raita.lastElementChild.previousElementSibling.firstElementChild.value = Biryani.lastElementChild.previousElementSibling.firstElementChild.value;
+                }
+            }
+        }
+
+        //function to generate bill
+        function calBill() {
+            let calbill = confirm("Confirm Order?");
+            if (calbill == true) {
+                orderList = [];
+
+                let total = 0;
+                let price = 0;
+                let qty = 0;
+                let itemTotal = 0;
+
+                for (let item of dishItems) {
+                    if (item.checked == true) {
+                        let x = item.parentNode.previousElementSibling; //local
+                        name = x.parentNode.firstElementChild.nextElementSibling.firstElementChild.value;
+                        price = +x.previousElementSibling.firstElementChild.value;
+                        qty = x.firstElementChild.value;
+                        itemTotal = price * qty;
+                        total += price * qty;
+                        //condition to check raita is free or not
+                        if (item.parentNode.parentNode.firstElementChild.nextElementSibling.firstElementChild.value == 'Biryani') { //error found
+                            Raita.lastElementChild.previousElementSibling.firstElementChild.value = qty;
+                            total -= dishes[3].dishPrice * qty;
+                            console.log('Free Raita');
+                        }
+                        // let itemObj = ;
+                        orderList.push({
+                            dishName: name,
+                            dishPrice: price,
+                            dishQty: qty,
+                            dishTotal: itemTotal,
+                        });
+
+                        // let jsonOrder = JSON.stringify(orderList);
+                        // result.innerHTML = jsonOrder;
+                    }
+                }
+                
+                console.log(orderList);
+                
+
+                printJS({
+                    printable: orderList,
+                    properties: [
+                        { field: 'dishName', displayName: 'Item Description' },
+                        { field: 'dishPrice', displayName: 'Price' },
+                        { field: 'dishQty', displayName: 'Qty' },
+                        { field: 'dishTotal', displayName: 'Total' }
+                    ],
+                    header: '<h3 class="custom-h3 text-center">Point of Sale</h3>',
+                    style: '.custom-h3 { color: red; }',
+                    type: 'json'
+                });
+            }
+        }
+
+        //function to gotohome
+        function gotohome() {
+            let home = confirm("Do you want to go to home? \n\nNote: All changes will be lost");
+            if (home == true) {
+                window.location = "../index.html";
+            }
+        }
+
+        //function to clear all
+        function clearBill() {
+            let reset = confirm("Do you want to reset?");
+            if (reset == true) {
+                location.reload();
+            }
+        }
+    </script>
+</body>
+
+</html>
